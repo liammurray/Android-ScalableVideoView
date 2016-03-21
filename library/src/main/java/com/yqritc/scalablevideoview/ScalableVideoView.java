@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Surface;
 import android.view.TextureView;
 
@@ -27,6 +28,8 @@ public class ScalableVideoView extends TextureView implements TextureView.Surfac
 
     protected MediaPlayer mMediaPlayer;
     protected ScalableType mScalableType = ScalableType.NONE;
+
+    private final boolean mAutoRelease = false;
 
     public ScalableVideoView(Context context) {
         this(context, null);
@@ -63,6 +66,10 @@ public class ScalableVideoView extends TextureView implements TextureView.Surfac
 
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+        if (mMediaPlayer != null) {
+            // Force matrix update
+            scaleVideoSize(getVideoWidth(), getVideoHeight());
+        }
     }
 
     @Override
@@ -77,14 +84,9 @@ public class ScalableVideoView extends TextureView implements TextureView.Surfac
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (mMediaPlayer == null) {
-            return;
+        if (mAutoRelease) {
+            release();
         }
-
-        if (isPlaying()) {
-            stop();
-        }
-        release();
     }
 
     @Override
