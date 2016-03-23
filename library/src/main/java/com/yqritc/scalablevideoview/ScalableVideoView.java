@@ -74,6 +74,9 @@ public class ScalableVideoView extends TextureView implements TextureView.Surfac
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.setSurface(null);
+        }
         return false;
     }
 
@@ -106,6 +109,7 @@ public class ScalableVideoView extends TextureView implements TextureView.Surfac
         if (matrix != null) {
             setTransform(matrix);
         }
+        invalidate();
     }
 
     private void initializeMediaPlayer() {
